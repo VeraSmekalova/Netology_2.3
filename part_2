@@ -1,0 +1,147 @@
+documents = [
+  {'type': 'passport', 'number': '2207 876234', 'name': 'Василий Гупкин'},
+  {'type': 'invoice', 'number': '11-2', 'name': 'Геннадий Покемонов'},
+  {'type': 'insurance', 'number': '10006', 'name': 'Аристарх Павлов'},
+  {'type': 'contract', 'number': '184-VU', 'name': 'Николай Симонов'}
+]
+
+directories = {
+'1': ['2207 876234', '11-2'],
+'2': ['10006', '184-VU'],
+'3': []
+}
+
+def people():
+  user_number = input('Введите номер документа: ')
+  document_quantity = 0
+  for document in documents:
+    if document['number'] == user_number:
+      print('Документ номер {} принадлежит {}'.format(user_number, document['name']))
+      document_quantity += 1
+  if document_quantity == 0:
+    print('Документ с таким номером не найден.')  
+
+
+#people()
+
+def doc_list():
+  for index, document in enumerate(documents):
+    print(index + 1, document['type'], '"' + document['number'] + '"', '"' + document['name'] + '"')
+
+#doc_list()
+
+def shelf_of_document():
+  number_of_document = input('Введите номер документа: ')
+  document_quantity = 0
+  for key in directories:
+  #print (directories[key])
+    for number in directories[key]:
+      if number_of_document == number:
+        print('Документ номер {} находится на полке {}'.format(number_of_document, key))
+        document_quantity += 1
+  if document_quantity == 0:
+    print('Документ с таким номером не найден.')
+
+
+#shelf_of_document()
+
+
+def add_document():
+  user_type = input('Ведите тип документа: ')
+  user_number_of_document = input('Введите номер документа: ')
+  user_name_of_document = input('Введите имя и фамилию лица, которому принадлежит документ: ')
+  shelf_for_document = input('На какую полку разместить документ? ')
+  documents.append({'type': user_type, 'number': user_number_of_document, 'name': user_name_of_document})
+  directories.setdefault(shelf_for_document, list())
+  directories[shelf_for_document].append(user_number_of_document)
+  print('Документ {} номер {}, принадлежащий {} добавлен в каталог и на полку {}'.format(user_type, user_number_of_document, user_name_of_document, shelf_for_document))
+
+#add_document()
+
+def delete_document():
+  number_for_deletion = input('Введите номер документа, который нужно удалить: ')
+  document_quantity = 0
+  for index, document in enumerate(documents):
+    if document['number'] == number_for_deletion:
+      documents.pop(index)
+      document_quantity += 1
+  if document_quantity == 0:
+    print('Документ с таким номером не найден.')
+  for key in directories:
+    for number in directories[key]:
+      if number_for_deletion == number:
+        directories[key].remove(number_for_deletion)
+        print('Документ номер {} с полки {} и из общего каталога удален.'.format(number_for_deletion, key))  
+
+
+#delete_document()
+
+def move_document():
+  number_for_moving = input('Введите номер документа, который нужно переместить: ')
+  shelf_for_moving = input('Введите полку, на которую нужно переместить документ: ')
+  directories.setdefault(shelf_for_moving, list())
+  document_quantity = 0
+  for key in directories:
+    for number in directories[key]:
+      if number_for_moving == number:
+        while document_quantity < 1:
+          if key == shelf_for_moving:
+            print('Документ номер {} находится на полке {}. Перемещение не требуется'.format(number_for_moving, key))
+            document_quantity += 1
+
+          else:
+            directories[key].remove(number_for_moving)
+            directories[shelf_for_moving].append(number_for_moving)
+            document_quantity += 1
+            print('Документ номер {} перемещен с полки {} на полку {}'.format(number_for_moving, key, shelf_for_moving))
+            document_quantity += 1
+        
+    if document_quantity == 0:
+      print('Документ с таким номером не найден.')
+
+
+#move_document()
+
+
+def add_shelf():
+  new_shelf = input('Введите номер полки, которую нужно добавить: ')
+  directories.setdefault(new_shelf, list())
+  print('Добавлена полка {}'.format(new_shelf))
+
+
+def name_list():
+  for index, document in enumerate(documents):
+    print(index + 1, document['name'])
+
+#add_shelf()
+
+def main():
+  while True:
+    user_input = input('\nВведите команду. Если вам необходима подсказка, нажмите 1: ')
+    if user_input == '1':
+      print('p - выводит имя человека по номеру документа', 'l - выводит список всех документов в каталоге', 's - выводит номер полки по номеру документа', 'a - добавляет новый документ на полку', 'd - удаляет документ по номеру', 'm - перемещает документ на другую полку', 'as - создает новую полку','n - выводит список имен владельцев документов', 'q - выход из программы', sep = '\n')
+    elif user_input == 'p':
+      people()
+    elif user_input == 'l':
+      doc_list()
+    elif user_input == 's':
+      shelf_of_document()
+    elif user_input == 'a':
+      add_document()
+    elif user_input == 'd':
+      delete_document()
+    elif user_input == 'm':
+      move_document()
+    elif user_input == 'as':
+      add_shelf()
+    elif user_input == 'n':
+      try:
+        name_list()
+      except KeyError:
+        print('Имя владельца не указано. Проверьте информацию.')
+    elif user_input == 'q':
+      print('До свидания!')
+      break
+
+
+main()
